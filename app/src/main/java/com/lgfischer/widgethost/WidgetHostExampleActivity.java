@@ -24,7 +24,8 @@ import android.widget.Toast;
  * @author Leonardo Garcia Fischer (http://coderender.blogspot.com/)
  * 
  */
-public class WidgetHostExampleActivity extends Activity {
+public class WidgetHostExampleActivity extends Activity
+{
 
 	static final String TAG = "WidgetHostExampleActivity";
 
