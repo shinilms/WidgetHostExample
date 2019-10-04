@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "com.lgfischer.widgethost"
         minSdkVersion 14
-        targetSdkVersion 14
+        targetSdkVersion 29
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_5
             targetCompatibility JavaVersion.VERSION_1_5
