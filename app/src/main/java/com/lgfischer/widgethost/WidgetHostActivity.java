@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -59,22 +57,7 @@ public class WidgetHostActivity extends AppCompatActivity {
 		int appWidgetId = this.mAppWidgetHost.allocateAppWidgetId();
 		Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
 		pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-		addEmptyData(pickIntent);
 		startActivityForResult(pickIntent, REQUEST_PICK_APPWIDGET);
-	}
-
-	/**
-	 * This avoids a bug in the com.android.settings.AppWidgetPickActivity,
-	 * which is used to select widgets. This just adds empty extras to the
-	 * intent, avoiding the bug.
-	 *
-	 * See more: http://code.google.com/p/android/issues/detail?id=4272
-	 */
-	void addEmptyData(Intent pickIntent) {
-		ArrayList<AppWidgetProviderInfo> customInfo = new ArrayList<AppWidgetProviderInfo>();
-		pickIntent.putParcelableArrayListExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, customInfo);
-		ArrayList<Bundle> customExtras = new ArrayList<Bundle>();
-		pickIntent.putParcelableArrayListExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, customExtras);
 	}
 
 	/**
