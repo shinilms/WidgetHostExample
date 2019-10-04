@@ -26,14 +26,16 @@ import androidx.appcompat.app.AppCompatActivity;
  * @author Leonardo Garcia Fischer (http://coderender.blogspot.com/)
  *
  */
-public class WidgetHostExampleActivity extends AppCompatActivity {
+public class WidgetHostActivity extends AppCompatActivity {
+	private static final String TAG = "WidgetHostActivity";
+	private static final int APPWIDGET_HOST_ID = 100;
+	private static final int REQUEST_PICK_APPWIDGET = 1;
+	private static final int REQUEST_CREATE_APPWIDGET = 2;
 
-	static final String TAG = "WidgetHostExampleActivity";
+	private AppWidgetManager mAppWidgetManager;
+	private AppWidgetHost mAppWidgetHost;
 
-	AppWidgetManager mAppWidgetManager;
-	AppWidgetHost mAppWidgetHost;
-
-	ViewGroup mainlayout;
+	private ViewGroup mainLayout;
 
 	/**
 	 * Called on the creation of the activity.
@@ -41,12 +43,12 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_widget_host);
 
-		mainlayout = (ViewGroup) findViewById(R.id.main_layout);
+		mainLayout = findViewById(R.id.main_layout);
 
 		mAppWidgetManager = AppWidgetManager.getInstance(this);
-		mAppWidgetHost = new AppWidgetHost(this, R.id.APPWIDGET_HOST_ID);
+		mAppWidgetHost = new AppWidgetHost(this, APPWIDGET_HOST_ID);
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 		Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
 		pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		addEmptyData(pickIntent);
-		startActivityForResult(pickIntent, R.id.REQUEST_PICK_APPWIDGET);
+		startActivityForResult(pickIntent, REQUEST_PICK_APPWIDGET);
 	}
 
 	/**
@@ -83,11 +85,11 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			if (requestCode == R.id.REQUEST_PICK_APPWIDGET) {
+			if (requestCode == REQUEST_PICK_APPWIDGET) {
 				if (data != null) {
 					configureWidget(data);
 				}
-			} else if (requestCode == R.id.REQUEST_CREATE_APPWIDGET) {
+			} else if (requestCode == REQUEST_CREATE_APPWIDGET) {
 				if (data != null) {
 					createWidget(data);
 				}
@@ -115,7 +117,7 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 			Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
 			intent.setComponent(appWidgetInfo.configure);
 			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-			startActivityForResult(intent, R.id.REQUEST_CREATE_APPWIDGET);
+			startActivityForResult(intent, REQUEST_CREATE_APPWIDGET);
 		} else {
 			createWidget(data);
 		}
@@ -134,7 +136,7 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 
 		AppWidgetHostView hostView = mAppWidgetHost.createView(this, appWidgetId, appWidgetInfo);
 		hostView.setAppWidget(appWidgetId, appWidgetInfo);
-		mainlayout.addView(hostView);
+		mainLayout.addView(hostView);
 
 		Log.i(TAG, "The widget size is: " + appWidgetInfo.minWidth + "*" + appWidgetInfo.minHeight);
 	}
@@ -154,8 +156,8 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 	 */
 	@Override
 	protected void onStop() {
-		super.onStop();
 		mAppWidgetHost.stopListening();
+		super.onStop();
 	}
 
 	/**
@@ -163,7 +165,7 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 	 */
 	public void removeWidget(AppWidgetHostView hostView) {
 		mAppWidgetHost.deleteAppWidgetId(hostView.getAppWidgetId());
-		mainlayout.removeView(hostView);
+		mainLayout.removeView(hostView);
 	}
 
 	/**
@@ -187,9 +189,9 @@ public class WidgetHostExampleActivity extends AppCompatActivity {
 	 * Handle the 'Remove Widget' menu.
 	 */
 	public void removeWidgetMenuSelected() {
-		int childCount = mainlayout.getChildCount();
+		int childCount = mainLayout.getChildCount();
 		if (childCount > 1) {
-			View view = mainlayout.getChildAt(childCount - 1);
+			View view = mainLayout.getChildAt(childCount - 1);
 			if (view instanceof AppWidgetHostView) {
 				removeWidget((AppWidgetHostView) view);
 				Toast.makeText(this, R.string.widget_removed_popup, Toast.LENGTH_SHORT).show();
