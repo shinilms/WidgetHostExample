@@ -1,8 +1,5 @@
 package com.lgfischer.widgethost;
 
-import java.util.ArrayList;
-
-import android.app.Activity;
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
@@ -17,14 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * This activity serves as an example of how to search, add and remove widgets
  * from a window.
- * 
+ *
  * @author Leonardo Garcia Fischer (http://coderender.blogspot.com/)
- * 
+ *
  */
-public class WidgetHostExampleActivity extends Activity {
+public class WidgetHostExampleActivity extends AppCompatActivity {
 
 	static final String TAG = "WidgetHostExampleActivity";
 
@@ -63,7 +65,7 @@ public class WidgetHostExampleActivity extends Activity {
 	 * This avoids a bug in the com.android.settings.AppWidgetPickActivity,
 	 * which is used to select widgets. This just adds empty extras to the
 	 * intent, avoiding the bug.
-	 * 
+	 *
 	 * See more: http://code.google.com/p/android/issues/detail?id=4272
 	 */
 	void addEmptyData(Intent pickIntent) {
@@ -78,12 +80,17 @@ public class WidgetHostExampleActivity extends Activity {
 	 * this function is called.
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
 			if (requestCode == R.id.REQUEST_PICK_APPWIDGET) {
-				configureWidget(data);
+				if (data != null) {
+					configureWidget(data);
+				}
 			} else if (requestCode == R.id.REQUEST_CREATE_APPWIDGET) {
-				createWidget(data);
+				if (data != null) {
+					createWidget(data);
+				}
 			}
 		} else if (resultCode == RESULT_CANCELED && data != null) {
 			int appWidgetId = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
@@ -99,7 +106,10 @@ public class WidgetHostExampleActivity extends Activity {
 	 */
 	private void configureWidget(Intent data) {
 		Bundle extras = data.getExtras();
-		int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+		int appWidgetId = 0;
+		if (extras != null) {
+			appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+		}
 		AppWidgetProviderInfo appWidgetInfo = mAppWidgetManager.getAppWidgetInfo(appWidgetId);
 		if (appWidgetInfo.configure != null) {
 			Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
@@ -116,7 +126,10 @@ public class WidgetHostExampleActivity extends Activity {
 	 */
 	public void createWidget(Intent data) {
 		Bundle extras = data.getExtras();
-		int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+		int appWidgetId = 0;
+		if (extras != null) {
+			appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+		}
 		AppWidgetProviderInfo appWidgetInfo = mAppWidgetManager.getAppWidgetInfo(appWidgetId);
 
 		AppWidgetHostView hostView = mAppWidgetHost.createView(this, appWidgetId, appWidgetInfo);
@@ -160,12 +173,12 @@ public class WidgetHostExampleActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.i(TAG, "Menu selected: " + item.getTitle() + " / " + item.getItemId() + " / " + R.id.addWidget);
 		switch (item.getItemId()) {
-		case R.id.addWidget:
-			selectWidget();
-			return true;
-		case R.id.removeWidget:
-			removeWidgetMenuSelected();
-			return false;
+			case R.id.addWidget:
+				selectWidget();
+				return true;
+			case R.id.removeWidget:
+				removeWidgetMenuSelected();
+				return false;
 		}
 		return super.onOptionsItemSelected(item);
 	}
